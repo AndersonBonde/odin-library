@@ -12,7 +12,7 @@ Book.prototype.info = function() {
 }
 
 Book.prototype.toggleRead = function() {
-    this.read == "Yes" ? this.read = "No" : this.read = "Yes";
+    this.read = this.read == "Yes" ? "No" : "Yes";
 }
 
 function addBookToLibrary(bookArr) {
@@ -29,6 +29,7 @@ function addBookToLibrary(bookArr) {
     }
 }
 
+// Creating 3 books to populate the list initially;
 const theHobbit = new Book("The Hobbit", "J.R.R. Tolkien", 255, "No");
 const harryPotter1 = new Book("Harry Potter and the Philosopher`s Stone", "J.K. Rowling", 223, "Yes");
 const harryPotter2 = new Book("Harry Potter and the Chamber of Secrets", "J.K. Rowling", 341, "Yes");
@@ -43,58 +44,21 @@ function displayBooks(bookArray) {
     bookArray.forEach(curr => {
         let tableRow = document.createElement("tr");
         let values = Object.values(curr);
+        let bookName = values[0];
 
         values.forEach((curr, index) => {
             let td = document.createElement("td");
             td.textContent = curr;
             
             if(index == 3) { // Read column;
-                let button = document.createElement("button");
-                button.classList.add("read-button");
-                button.dataset.book = values[0];
-
-                if(curr == "Yes") {
-                    button.innerHTML = "&check;";
-                    button.style.cssText = "background-color: greenyellow;"
-                } else {
-                    button.innerHTML = "&#10005;";
-                    button.style.cssText = "background-color: tomato; color: white;"
-                }
-
-                button.addEventListener("click", (e) => {
-                    let toSwitch = e.target.dataset.book;
-                    let book = myLibrary.get(toSwitch);
-                    book.toggleRead();
-                    displayBooks(myLibrary);
-                })
-
-                td.style.cssText = "display: flex; justify-content: space-between; align-items: center;";
-                td.appendChild(button);
+                addReadButtonToggle(curr, td, bookName);
             }
-
 
             tableRow.appendChild(td);
         })
 
-        let td = document.createElement("td");
-        let removeButton = document.createElement("button");
-
-        removeButton.textContent = "Remove";
-        removeButton.classList.add("remove-button");
-        removeButton.dataset.book = values[0];
-
-        removeButton.addEventListener("click", (e) => {
-            let toDelete = e.target.dataset.book;
-
-            if(myLibrary.get(toDelete) !== undefined) {
-                myLibrary.delete(toDelete);
-            }
-
-            displayBooks(myLibrary);
-        })
-
-        td.appendChild(removeButton);
-        tableRow.appendChild(td);
+        addRemoveButtonToRow(bookName, tableRow);
+        
         bookTable.appendChild(tableRow);
     });
 }
@@ -102,11 +66,57 @@ displayBooks(myLibrary);
 
 function clearBookTable() {
     let tr = document.querySelectorAll("tr");
-    tr = Array.from(tr).slice(1); // Remove first row from selection;
+    tr = Array.from(tr).slice(1); // Remove first row from selection(Header);
 
     tr.forEach(curr => {
         bookTable.removeChild(curr);
     })
+}
+
+function addReadButtonToggle(curr, td, bookName) {
+    let button = document.createElement("button");
+    button.classList.add("read-button");
+    button.dataset.book = bookName;
+
+    if(curr == "Yes") {
+        button.innerHTML = "&check;";
+        button.style.cssText = "background-color: greenyellow;"
+    } else {
+        button.innerHTML = "&#10005;";
+        button.style.cssText = "background-color: tomato; color: white;"
+    }
+
+    button.addEventListener("click", (e) => {
+        let toSwitch = e.target.dataset.book;
+        let book = myLibrary.get(toSwitch);
+        book.toggleRead();
+        displayBooks(myLibrary);
+    })
+
+    td.style.cssText = "display: flex; justify-content: space-between; align-items: center;";
+    td.appendChild(button);
+}
+
+function addRemoveButtonToRow(bookName, tableRow) {
+    let td = document.createElement("td");
+    let removeButton = document.createElement("button");
+
+    removeButton.textContent = "Remove";
+    removeButton.classList.add("remove-button");
+    removeButton.dataset.book = bookName;
+
+    removeButton.addEventListener("click", (e) => {
+        let toDelete = e.target.dataset.book;
+
+        if(myLibrary.get(toDelete) !== undefined) {
+            myLibrary.delete(toDelete);
+        }
+
+        displayBooks(myLibrary);
+    })
+
+    td.appendChild(removeButton);
+    tableRow.appendChild(td);
 }
 
 const addNewButton = document.querySelector(".addBook");
