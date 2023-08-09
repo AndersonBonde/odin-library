@@ -1,20 +1,18 @@
 let myLibrary = new Map();
 
-class Book {
-    constructor(name, author, pages, read) {
-        this.name = name;
-        this.author - author;
-        this.pages = pages;
-        this.read = read;
-    }
+function Book(name, author, pages, read) {
+    this.name = name;
+    this.author = author;
+    this.pages = pages;
+    this.read = read;
+}
 
-    info() {
-        return `${this.name} by ${this.author}, ${this.pages} pages, ${this.read}`; 
-    }
+Book.prototype.info = function() {
+    return `${this.name} by ${this.author}, ${this.pages} pages, ${this.read}`;
+}
 
-    toggleRead() {
-        this.read = this.read == "Yes" ? "No" : "Yes";
-    }
+Book.prototype.toggleRead = function() {
+    this.read = this.read == "Yes" ? "No" : "Yes";
 }
 
 function addBookToLibrary(bookArr) {
